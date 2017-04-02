@@ -3,5 +3,10 @@ CONFIG += console c++11
 CONFIG -= app_bundle
 CONFIG -= qt
 
-SOURCES += main.cpp \
-    src/main.cpp
+SOURCES += src/main.cpp
+
+HEADERS +=
+
+INCLUDEPATH += lib/zlib-1.2.11/
+QMAKE_CXXFLAGS +=
+QMAKE_LFLAGS += -lz
