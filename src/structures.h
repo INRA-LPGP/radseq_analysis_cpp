@@ -1,16 +1,24 @@
 #pragma once
 
 #include <map>
+#include <unordered_map>
 #include <string>
+#include <vector>
+#include <iostream>
 
 struct Individual{
     std::string name;
     bool male = true;
 };
 
-// Default string - string map
-typedef std::map<std::string, std::string> ss_dict;
+typedef std::unordered_map<uint16_t, Individual> indiv_map; // key: column number, value: name and sex of the individual
 
-typedef std::map<uint16_t, Individual> indiv_map;
+typedef std::vector<std::vector<std::string>> hap_map; // vector of vector of haplotypes
 
+typedef std::vector<std::vector<uint16_t>> table;
 
+void visualize(indiv_map i);
+
+//void visualize(hap_map h);
+
+//void visualize(hap_map h, uint32_t locus);

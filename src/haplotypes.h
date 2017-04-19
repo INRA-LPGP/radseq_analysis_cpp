@@ -2,6 +2,8 @@
 #include "utils.h"
 #include "structures.h"
 
-void get_individual_data(std::string& file_path);
+indiv_map get_individual_data(std::string& file_path, uint16_t* numbers);
 
-void get_haplotypes(std::string& file_path);
+hap_map get_haplotypes(std::string& file_path, indiv_map& individuals);
+
+void filter_haplotypes(hap_map& haplotypes, indiv_map& individuals, table& margins);
