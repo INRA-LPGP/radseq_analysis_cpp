@@ -1,13 +1,13 @@
 #include "bootstrap.h"
 
-uint32_t rep(std::vector<int> c, hap_map& haplotypes, indiv_map individuals, table& margins) {
+uint32_t rep(std::vector<int> c, hap_map& haplotypes, bool* indiv_sexes, const int* margins) {
 
-    for (auto i: c) individuals[i] = false;
-    return filter_haplotypes(haplotypes, individuals, margins);
+    for (auto i: c) indiv_sexes[i] = false;
+    return filter_haplotypes(haplotypes, indiv_sexes, margins);
 }
 
 
-std::vector<uint32_t> bootstrap(int max_neomales, indiv_map& individuals, int* numbers, hap_map& haplotypes, table& margins) {
+std::vector<uint32_t> bootstrap(const int max_neomales, bool* indiv_sexes, int* numbers, const int n_indiv, hap_map &haplotypes, const int *margins) {
 
     std::vector<uint32_t> results;
     std::vector<std::vector<int>> combinations;
@@ -19,7 +19,9 @@ std::vector<uint32_t> bootstrap(int max_neomales, indiv_map& individuals, int* n
 
     for (auto c: combinations){
 
-        results.push_back(rep(c, haplotypes, individuals, margins));
+        bool new_indiv_sexes[n_indiv];
+        for (auto i=0; i<n_indiv; ++i) new_indiv_sexes[i] = indiv_sexes[i];
+        results.push_back(rep(c, haplotypes, new_indiv_sexes, margins));
     }
 
     return results;

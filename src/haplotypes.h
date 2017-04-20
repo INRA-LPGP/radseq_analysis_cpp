@@ -2,8 +2,10 @@
 #include "utils.h"
 #include "structures.h"
 
-indiv_map get_individual_data(std::string& file_path, int* numbers);
+int get_numbers(std::string& file_path, int* numbers);
 
-hap_map get_haplotypes(std::string& file_path, indiv_map& individuals);
+void get_individual_data(std::string& file_path, bool* indiv_sexes, bool* indiv_col);
 
-uint32_t filter_haplotypes(hap_map& haplotypes, indiv_map& individuals, table& margins);
+hap_map get_haplotypes(std::string& file_path, bool* indiv_col, const int n_indiv);
+
+uint32_t filter_haplotypes(hap_map& haplotypes, bool* indiv_sexes, const int* margins);
