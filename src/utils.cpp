@@ -18,15 +18,24 @@ std::vector<std::string> split(std::string str, const std::string delimiter){
 }
 
 
-uint64_t
-choose(uint64_t n, uint64_t k) {
-    if (k > n) {
-        return 0;
-    }
-    uint64_t r = 1;
-    for (uint64_t d = 1; d <= k; ++d) {
-        r *= n--;
-        r /= d;
-    }
-    return r;
+void comb(int N, int K, std::vector<std::vector<int>>& combinations) {
+
+    std::string bitmask(K, 1); // K leading 1's
+    bitmask.resize(N, 0); // N-K trailing 0's
+
+    std::vector<int> combination(K);
+    int c = 0;
+
+    do {
+        c = 0;
+        for (int i = 0; i < N; ++i) { // [0..N-1] integers
+
+            if (bitmask[i]) {
+                combination[c] = i;
+                ++c;
+            }
+        }
+        combinations.push_back(combination);
+    } while (std::prev_permutation(bitmask.begin(), bitmask.end()));
+
 }

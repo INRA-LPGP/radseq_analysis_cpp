@@ -1,11 +1,11 @@
 #include "structures.h"
 
-void visualize(indiv_map i){
+//void visualize(indiv_map i){
 
-    for (auto x: i) {
-        std::cout << x.first << " : " << x.second.name << ", " << x.second.male << "\n";
-    }
-}
+//    for (auto x: i) {
+//        std::cout << x.first << " : " << x.second.name << ", " << x.second.male << "\n";
+//    }
+//}
 
 
 //void visualize(hap_map h){
@@ -26,3 +26,10 @@ void visualize(indiv_map i){
 //}
 
 
+void visualize(table t) {
+
+    std::cout << "-" << "-" << "-" << "-" << "-" << "\n"
+              << "|" << t[0][0] << "|" << t[0][1] << "|" << "\n"
+              << "|" << t[1][0] << "|" << t[1][1] << "|" << "\n"
+              << "-" << "-" << "-" << "-" << "-" << std::endl;
+}
