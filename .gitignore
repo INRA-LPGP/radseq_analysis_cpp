@@ -74,4 +74,4 @@ Thumbs.db
 # Perso
 bin/*
 lib/*
-
+callgrind*
