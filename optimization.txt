@@ -1,0 +1,7 @@
+# EASY
+- Merge bootstrap into filtering (no function call)
+- Don't create a new array for the combination, instead modify a former array
+
+# HARD
+- Parallelize
+- Optimize combination generation (does it even matter ...)
