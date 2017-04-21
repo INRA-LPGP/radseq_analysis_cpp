@@ -4,16 +4,14 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += src/main.cpp \
-    src/process_file.cpp \
-    src/structures.cpp \
-    src/loci_to_extract.cpp \
-    src/utils.cpp
+    src/utils.cpp \
+    src/bootstrap.cpp \
+    src/haplotypes.cpp
 
 HEADERS += \
-    src/process_file.h \
-    src/structures.h \
-    src/loci_to_extract.h \
-    src/utils.h
+    src/utils.h \
+    src/bootstrap.h \
+    src/haplotypes.h
 
 INCLUDEPATH += lib/zlib-1.2.11/
 QMAKE_CXXFLAGS +=
