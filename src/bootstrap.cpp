@@ -1,13 +1,15 @@
 #include "bootstrap.h"
 
-uint32_t rep(std::vector<int> c, bool** haplotypes, bool* indiv_sexes, const int margin, const int n_indiv, const int n_haplotypes) {
+uint32_t rep(std::vector<int> c, bool** haplotypes, const int margin, const int n_males, const int n_haplotypes) {
 
-    for (auto i: c) indiv_sexes[i] = false;
-    return filter_haplotypes(haplotypes, indiv_sexes, margin, n_indiv, n_haplotypes);
+    bool males[n_males];
+    for (auto i=0; i<n_males; ++i) males[i] = true;
+    for (auto i: c) males[i] = false;
+    return filter_haplotypes(haplotypes, males, margin, n_males, n_haplotypes);
 }
 
 
-std::vector<uint32_t> bootstrap(const int max_neomales, bool* indiv_sexes, int* numbers, const int n_indiv, const int n_haplotypes, bool** haplotypes, const int margin) {
+std::vector<uint32_t> bootstrap(const int max_neomales, int* numbers, const int n_haplotypes, bool** haplotypes, const int margin) {
 
     std::vector<uint32_t> results;
     std::vector<std::vector<int>> combinations;
@@ -21,9 +23,7 @@ std::vector<uint32_t> bootstrap(const int max_neomales, bool* indiv_sexes, int* 
 
     for (auto c: combinations){
 
-        bool new_indiv_sexes[n_indiv];
-        for (auto i=0; i<n_indiv; ++i) new_indiv_sexes[i] = indiv_sexes[i];
-        results.push_back(rep(c, haplotypes, new_indiv_sexes, margin, n_indiv, n_haplotypes));
+        results.push_back(rep(c, haplotypes, margin, numbers[0], n_haplotypes));
     }
 
     return results;

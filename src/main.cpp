@@ -7,7 +7,7 @@ int main(int argc, char *argv[]) {
     std::string file_path = "/home/rferon/work/code/radseq_analyses_pipeline/results_m_5_n_1_M_3/batch_0.haplotypes.tsv";
 
     const float e = 0.95;
-    const int max_neomales = 3;
+    const int max_neomales = 4;
 
     int numbers[2] {0, 0};
 
@@ -23,6 +23,7 @@ int main(int argc, char *argv[]) {
     std::cout << numbers[0] << ", " << numbers[1] << std::endl;
 
     const int margin = int(std::round(numbers[0] * e));
+    const int margin_f = int(std::round(numbers[0] * (1 - e)));
     std::cout << "Margin : " << margin << std::endl;
 
     int n_haplotypes = number_of_haplotypes(file_path);
@@ -31,7 +32,7 @@ int main(int argc, char *argv[]) {
     haplotypes = new bool* [n_haplotypes];
     for (auto i=0; i<n_haplotypes; ++i) haplotypes[i] = new bool[numbers[0]];
 
-    get_haplotypes(file_path, indiv_col, haplotypes);
+    get_haplotypes(file_path, indiv_col, indiv_sexes, haplotypes, margin_f);
 
 //    for (auto i=0; i<n_haplotypes; ++i){
 //        for (auto j=0; j<n_indiv; ++j) std::cout << haplotypes[i][j] << " - ";
@@ -40,9 +41,13 @@ int main(int argc, char *argv[]) {
 
     std::cout << "Haplotypes found: " << n_haplotypes << std::endl;
 
-//    auto loci_n = filter_haplotypes(haplotypes, indiv_sexes, margin, n_indiv, n_haplotypes);
-//    std::cout << loci_n << std::endl;
-    std::vector<uint32_t> loci_n = bootstrap(max_neomales, indiv_sexes, numbers, numbers[0], n_haplotypes, haplotypes, margin);
+//    int n_males = numbers[0];
+//    bool males[n_males];
+//    for (auto i=0; i<n_males; ++i) males[i] = true;
+//    auto loci_n = filter_haplotypes(haplotypes, males, margin, n_males, n_haplotypes);
+//    std::cout << "Loci : " << loci_n << std::endl;
+
+    std::vector<uint32_t> loci_n = bootstrap(max_neomales, numbers, n_haplotypes, haplotypes, margin);
 
     for (auto l: loci_n) std::cout << l << " - ";
     std::cout<<std::endl;
