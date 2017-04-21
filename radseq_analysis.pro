@@ -4,13 +4,11 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += src/main.cpp \
-    src/structures.cpp \
     src/utils.cpp \
     src/bootstrap.cpp \
     src/haplotypes.cpp
 
 HEADERS += \
-    src/structures.h \
     src/utils.h \
     src/bootstrap.h \
     src/haplotypes.h

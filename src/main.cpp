@@ -25,18 +25,24 @@ int main(int argc, char *argv[]) {
     const int margins[4] { int(std::round(numbers[0] - e * numbers[0])), int(std::round(e * numbers[0])),
                            int(std::round(numbers[1] - e * numbers[1])), int(std::round(e * numbers[1])) };
 
-    hap_map haplotypes = get_haplotypes(file_path, indiv_col, n_indiv);
+    int n_haplotypes = number_of_haplotypes(file_path);
 
-//    for (auto h: haplotypes){
+    int** haplotypes;
+    haplotypes = new int* [n_haplotypes];
+    for (auto i=0; i<n_haplotypes; ++i) haplotypes[i] = new int[n_indiv];
 
-//        for (auto i=0; i<n_indiv; ++i) std::cout << h[i] << " - ";
-//        std::cout << std::endl;
-//    }
+    int haplotype_numbers[n_haplotypes];
+    get_haplotypes(file_path, indiv_col, haplotypes, haplotype_numbers);
 
-    std::vector<uint32_t> loci_n = bootstrap(max_neomales, indiv_sexes, numbers, n_indiv, haplotypes, margins);
+    std::cout << "Haplotypes found: " << n_haplotypes << std::endl;
 
-    for (auto l: loci_n) std::cout << l << " - ";
-    std::cout<<std::endl;
+    std::vector<uint32_t> loci_n = bootstrap(max_neomales, indiv_sexes, numbers, n_indiv, n_haplotypes, haplotypes, haplotype_numbers, margins);
+
+//    for (auto l: loci_n) std::cout << l << " - ";
+//    std::cout<<std::endl;
+
+    for (auto i=0; i<n_haplotypes; ++i) delete[] haplotypes[i];
+    delete[] haplotypes;
 
     return 0;
 }
