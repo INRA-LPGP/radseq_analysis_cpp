@@ -80,24 +80,6 @@ void get_individual_data(std::string& file_path, bool* indiv_sexes, bool* indiv_
 }
 
 
-int number_of_haplotypes(std::string& file_path) {
-
-    std::ifstream haplotype_file(file_path);
-    std::string line;
-    std::getline(haplotype_file, line);
-    int hap_n = 0;
-
-    while (std::getline(haplotype_file, line)) {
-
-        ++hap_n;
-    }
-
-    haplotype_file.close();
-
-    return hap_n;
-}
-
-
 void get_haplotypes(std::string& file_path, bool* indiv_col, bool** haplotypes) {
 
     std::ifstream haplotype_file(file_path);
@@ -134,7 +116,7 @@ void get_haplotypes(std::string& file_path, bool* indiv_col, bool** haplotypes) 
 
             if (indiv_col[field_n]) {
 
-                haplotypes[locus_n][indiv_n] = (f == top_haplotype);
+                if (indiv_sexes[indiv_n]) haplotypes[locus_n][indiv_n] = (f == top_haplotype);
                 ++indiv_n;
             }
 
