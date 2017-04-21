@@ -8,6 +8,6 @@ void get_individual_data(std::string& file_path, bool* indiv_sexes, bool* indiv_
 
 int number_of_haplotypes(std::string& file_path);
 
-void get_haplotypes(std::string& file_path, bool* indiv_col, int** haplotypes, int* haplotype_numbers);
+void get_haplotypes(std::string& file_path, bool* indiv_col, bool** haplotypes);
 
-uint32_t filter_haplotypes(int** haplotypes, int* haplotype_numbers, bool* indiv_sexes, const int* margins, const int n_indiv, const int n_haplotypes);
+uint32_t filter_haplotypes(bool** haplotypes, bool* indiv_sexes, const int margin, const int n_indiv, const int n_haplotypes);

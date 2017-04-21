@@ -6,7 +6,7 @@ int main(int argc, char *argv[]) {
 
     std::string file_path = "/home/rferon/work/code/radseq_analyses_pipeline/results_m_5_n_1_M_3/batch_0.haplotypes.tsv";
 
-    const float e = 0.1;
+    const float e = 0.95;
     const int max_neomales = 2;
 
     int numbers[2] {0, 0};
@@ -22,21 +22,27 @@ int main(int argc, char *argv[]) {
     std::cout << "Individual numbers:" << std::endl;
     std::cout << numbers[0] << ", " << numbers[1] << std::endl;
 
-    const int margins[4] { int(std::round(numbers[0] - e * numbers[0])), int(std::round(e * numbers[0])),
-                           int(std::round(numbers[1] - e * numbers[1])), int(std::round(e * numbers[1])) };
+    const int margin = int(std::round(n_indiv * e));
+    std::cout << "Margin : " << margin << std::endl;
 
     int n_haplotypes = number_of_haplotypes(file_path);
 
-    int** haplotypes;
-    haplotypes = new int* [n_haplotypes];
-    for (auto i=0; i<n_haplotypes; ++i) haplotypes[i] = new int[n_indiv];
+    bool** haplotypes;
+    haplotypes = new bool* [n_haplotypes];
+    for (auto i=0; i<n_haplotypes; ++i) haplotypes[i] = new bool[n_indiv];
 
-    int haplotype_numbers[n_haplotypes];
-    get_haplotypes(file_path, indiv_col, haplotypes, haplotype_numbers);
+    get_haplotypes(file_path, indiv_col, haplotypes);
+
+//    for (auto i=0; i<n_haplotypes; ++i){
+//        for (auto j=0; j<n_indiv; ++j) std::cout << haplotypes[i][j] << " - ";
+//        std::cout << std::endl;
+//    }
 
     std::cout << "Haplotypes found: " << n_haplotypes << std::endl;
 
-    std::vector<uint32_t> loci_n = bootstrap(max_neomales, indiv_sexes, numbers, n_indiv, n_haplotypes, haplotypes, haplotype_numbers, margins);
+//    auto loci_n = filter_haplotypes(haplotypes, indiv_sexes, margin, n_indiv, n_haplotypes);
+//    std::cout << loci_n << std::endl;
+    std::vector<uint32_t> loci_n = bootstrap(max_neomales, indiv_sexes, numbers, n_indiv, n_haplotypes, haplotypes, margin);
 
 //    for (auto l: loci_n) std::cout << l << " - ";
 //    std::cout<<std::endl;

@@ -98,44 +98,49 @@ int number_of_haplotypes(std::string& file_path) {
 }
 
 
-void get_haplotypes(std::string& file_path, bool* indiv_col, int** haplotypes, int* haplotype_numbers) {
+void get_haplotypes(std::string& file_path, bool* indiv_col, bool** haplotypes) {
 
     std::ifstream haplotype_file(file_path);
     std::string line;
     std::getline(haplotype_file, line);
 
-    std::vector<std::string> fields, temp_haplotypes;
-    int field_n = 0, indiv_n = 0, locus_n = 0, hap_n = 0;
+    std::vector<std::string> fields;
+    int field_n = 0, indiv_n = 0, locus_n = 0;
+
+    std::unordered_map<std::string, int> temp_haplotypes;
+    std::string top_haplotype;
 
     while (std::getline(haplotype_file, line)) {
 
-        temp_haplotypes.resize(0);
-        indiv_n = 0, field_n = 0, hap_n = 0;
+        temp_haplotypes.clear();
+        indiv_n = 0, field_n = 0;
         fields = split(line, "\t");
+        top_haplotype = "";
 
         for (auto f: fields) {
 
+            if (indiv_col[field_n]) ++temp_haplotypes[f];
+            ++field_n;
+        }
+
+        // Find most frequent haplotype for this locus using a lambda expression
+        top_haplotype  = std::max_element(temp_haplotypes.begin(), temp_haplotypes.end(),
+                                          [](const std::pair<std::string, int>& p1, const std::pair<std::string, int>& p2) {
+                                          return p1.second < p2.second; })->first;
+
+        field_n = 0;
+
+        for (auto f: fields){
+
             if (indiv_col[field_n]) {
 
-                auto pos = std::find(temp_haplotypes.begin(), temp_haplotypes.end(), f);
-
-                if (pos == temp_haplotypes.end()) {
-
-                    hap_n = temp_haplotypes.size();
-                    temp_haplotypes.push_back(f);
-
-                } else {
-                    hap_n = std::distance(temp_haplotypes.begin(), pos);
-                }
-
-                haplotypes[locus_n][indiv_n] = hap_n;
+                haplotypes[locus_n][indiv_n] = (f == top_haplotype);
                 ++indiv_n;
             }
 
             ++field_n;
         }
 
-        haplotype_numbers[locus_n] = temp_haplotypes.size();
         ++locus_n;
     }
 
@@ -143,35 +148,18 @@ void get_haplotypes(std::string& file_path, bool* indiv_col, int** haplotypes, i
 }
 
 
-uint32_t filter_haplotypes(int** haplotypes, int* haplotype_numbers, bool* indiv_sexes, const int* margins, const int n_indiv, const int n_haplotypes) {
+uint32_t filter_haplotypes(bool** haplotypes, bool* indiv_sexes, const int margin, const int n_indiv, const int n_haplotypes) {
 
     // Margins : [males high, males low, females high, females low]
-    auto high_bound = std::max_element(haplotype_numbers, haplotype_numbers + n_haplotypes);
-    int males[*high_bound];
-    int females[*high_bound];
 
     uint32_t loci_count = 0;
+    int res = 0;
 
     for (int i = 0; i < n_haplotypes; ++i) {
 
-        for (auto k=0; k<haplotype_numbers[i]; ++k){
-            males[k] = 0;
-            females[k] = 0;
-        }
-
-        for (int j = 0; j < n_indiv; ++j) {
-
-            if (indiv_sexes[j]) ++males[haplotypes[i][j]];
-            else ++females[haplotypes[i][j]];
-        }
-
-        for (auto k=0; k<haplotype_numbers[i]; ++k) {
-
-            if ((males[k] > margins[0] and females[k] < margins[3]) or (males[k] < margins[1] and females[k] > margins[2])) {
-                ++loci_count;
-                break;
-            }
-        }
+        res = 0;
+        for (int j = 0; j < n_indiv; ++j) res += !(haplotypes[i][j] ^ indiv_sexes[j]);
+        if (res > margin or n_indiv - res > margin) ++loci_count;
     }
 
     return loci_count;
