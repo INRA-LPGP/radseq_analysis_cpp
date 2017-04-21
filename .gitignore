@@ -75,3 +75,5 @@ Thumbs.db
 bin/*
 lib/*
 callgrind*
+data/
+optimization.txt
