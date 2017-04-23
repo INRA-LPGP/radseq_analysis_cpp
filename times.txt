@@ -1,0 +1,6 @@
+Basetime : 8.64s
+Merge rep: 8.66s
+Better allocation: 8.65s
+Hashmap results: 8.65s
+
+K = 4 --> 68s

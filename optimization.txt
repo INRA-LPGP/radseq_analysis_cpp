@@ -3,5 +3,6 @@
 - Don't create a new array for the combination, instead modify a former array
 
 # HARD
-- Parallelize
+- Parallelize (Find a function to give next permutation from a given permutation, used for chunking without storing data)
 - Optimize combination generation (does it even matter ...)
+- Better tree walking algorithm (this should be possible!)

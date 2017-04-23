@@ -4,10 +4,10 @@
 
 int main(int argc, char *argv[]) {
 
-    std::string file_path = "/home/rferon/work/code/radseq_analyses_pipeline/results_m_5_n_1_M_3/batch_0.haplotypes.tsv";
+    std::string file_path = argv[1];
 
     const float e = 0.95;
-    const int max_neomales = 4;
+    const int max_neomales = std::stoi(argv[2]);
 
     int numbers[2] {0, 0};
 
@@ -47,13 +47,7 @@ int main(int argc, char *argv[]) {
 //    auto loci_n = filter_haplotypes(haplotypes, males, margin, n_males, n_haplotypes);
 //    std::cout << "Loci : " << loci_n << std::endl;
 
-    std::vector<uint32_t> loci_n = bootstrap(max_neomales, numbers, n_haplotypes, haplotypes, margin);
-
-    for (auto l: loci_n) std::cout << l << " - ";
-    std::cout<<std::endl;
-
-    for (auto i=0; i<n_haplotypes; ++i) delete[] haplotypes[i];
-    delete[] haplotypes;
+    auto o = bootstrap(max_neomales, numbers, n_haplotypes, haplotypes, margin);
 
     return 0;
 }

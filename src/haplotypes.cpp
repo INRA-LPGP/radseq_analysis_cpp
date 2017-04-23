@@ -100,8 +100,6 @@ int number_of_haplotypes(std::string& file_path) {
 
 void get_haplotypes(std::string& file_path, bool* indiv_col, bool* indiv_sexes, bool** haplotypes, int margin) {
 
-    std::cout << margin << std::endl;
-
     std::ifstream haplotype_file(file_path);
     std::string line;
     std::getline(haplotype_file, line);
