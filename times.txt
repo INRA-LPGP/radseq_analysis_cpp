@@ -4,3 +4,5 @@ Better allocation: 8.65s
 Hashmap results: 8.65s
 
 K = 4 --> 68s
+
+Batch results without multithreading: 6.80s

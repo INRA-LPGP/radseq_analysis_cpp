@@ -8,6 +8,7 @@ int main(int argc, char *argv[]) {
 
     const float e = 0.95;
     const int max_neomales = std::stoi(argv[2]);
+    const int n_threads = std::stoi(argv[3]);
 
     int numbers[2] {0, 0};
 
@@ -34,10 +35,10 @@ int main(int argc, char *argv[]) {
 
     get_haplotypes(file_path, indiv_col, indiv_sexes, haplotypes, margin_f);
 
-//    for (auto i=0; i<n_haplotypes; ++i){
-//        for (auto j=0; j<n_indiv; ++j) std::cout << haplotypes[i][j] << " - ";
-//        std::cout << std::endl;
-//    }
+//        for (auto i=0; i<n_haplotypes; ++i){
+//            for (auto j=0; j<n_indiv; ++j) std::cout << haplotypes[i][j] << " - ";
+//            std::cout << std::endl;
+//        }
 
     std::cout << "Haplotypes found: " << n_haplotypes << std::endl;
 
@@ -47,7 +48,7 @@ int main(int argc, char *argv[]) {
 //    auto loci_n = filter_haplotypes(haplotypes, males, margin, n_males, n_haplotypes);
 //    std::cout << "Loci : " << loci_n << std::endl;
 
-    auto o = bootstrap(max_neomales, numbers, n_haplotypes, haplotypes, margin);
+    auto o = bootstrap(max_neomales, numbers, n_haplotypes, haplotypes, margin, n_threads);
 
     return 0;
 }

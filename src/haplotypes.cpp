@@ -54,6 +54,8 @@ void get_individual_data(std::string& file_path, bool* indiv_sexes, bool* indiv_
 
     for (auto f: fields) {
 
+        indiv_col[field_n] = false;
+
         groups = split(f, "_");
 
         if (groups.size() == 3) {
