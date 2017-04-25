@@ -27,13 +27,10 @@ int bootstrap(const int max_neomales, int* numbers, const int n_haplotypes, std:
         if ((t == n_threads - 1) and (end != int(combinations.size()) - 1)) end = combinations.size();
         std::cout << "Chunk " << t << " : " <<start << ", " << end << std::endl;
 
-        threads.push_back(std::thread(bootstrap_chunk, std::ref(numbers), n_haplotypes, haplotypes, margin, std::ref(combinations), start, end, std::ref(results), std::ref(results_mutex)));
+        threads.push_back(std::thread(bootstrap_chunk, n_haplotypes, haplotypes, margin, std::ref(combinations), start, end, std::ref(results), std::ref(results_mutex)));
     }
 
     for (auto &t : threads) t.join();
-
-//    for (auto i=0; i<n_haplotypes; ++i) delete[] haplotypes[i];
-//    delete[] haplotypes;
 
     std::cout << "Results :" << std::endl;
     for (auto r: results) std::cout << r.first << " : " << r.second << std::endl;
@@ -42,7 +39,7 @@ int bootstrap(const int max_neomales, int* numbers, const int n_haplotypes, std:
 }
 
 
-void bootstrap_chunk(int* numbers, const int n_haplotypes, std::bitset<64>* haplotypes, const int margin,
+void bootstrap_chunk(const int n_haplotypes, std::bitset<64>* haplotypes, const int margin,
                      std::vector<std::vector<int>>& combinations, int start, int end, std::map<int, int>& results, std::mutex& results_mutex) {
 
     std::map<int, int> temp_results;
@@ -54,7 +51,7 @@ void bootstrap_chunk(int* numbers, const int n_haplotypes, std::bitset<64>* hapl
         males.set();
         for (auto c: combinations[i]) males.flip(c);
 
-        ++(temp_results[filter_haplotypes(haplotypes, males, margin, numbers[0], n_haplotypes)]);
+        ++(temp_results[filter_haplotypes(haplotypes, males, margin, n_haplotypes)]);
     }
 
     results_mutex.lock();

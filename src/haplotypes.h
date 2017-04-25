@@ -11,4 +11,4 @@ int number_of_haplotypes(std::string& file_path);
 
 void get_haplotypes(std::string& file_path, bool* indiv_col, bool* indiv_sexes,  std::bitset<64>* haplotypes, int margin);
 
-uint32_t filter_haplotypes(std::bitset<64>* haplotypes, std::bitset<64>& indiv_sexes, const int margin, const int n_males, const int n_haplotypes);
+uint32_t filter_haplotypes(std::bitset<64>* haplotypes, std::bitset<64>& indiv_sexes, const int margin, const int n_haplotypes);
