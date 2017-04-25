@@ -6,7 +6,7 @@ int main(int argc, char *argv[]) {
 
     std::string file_path = argv[1];
 
-    const float e = 0.95;
+    const float e = 0.90;
     const int max_neomales = std::stoi(argv[2]);
     const int n_threads = std::stoi(argv[3]);
 
@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
 
     const int margin = int(std::round(numbers[0] * e));
     const int margin_f = int(std::round(numbers[1] * (1 - e)));
-    std::cout << "Margin : " << margin << std::endl;
+    std::cout << "Margin : male -> " << margin << " | female -> " << margin_f << std::endl;
 
     int n_haplotypes = number_of_haplotypes(file_path, indiv_col, indiv_sexes, margin_f);
 
@@ -37,20 +37,7 @@ int main(int argc, char *argv[]) {
         haplotypes[i].set();
     }
 
-    std::cout << "SIZE : " << sizeof(haplotypes[0]) << std::endl;
-
     get_haplotypes(file_path, indiv_col, indiv_sexes, haplotypes, margin_f);
-
-//        for (auto i=0; i<n_haplotypes; ++i){
-//            for (auto j=0; j<n_indiv; ++j) std::cout << haplotypes[i][j] << " - ";
-//            std::cout << std::endl;
-//        }
-
-//    int n_males = numbers[0];
-//    bool males[n_males];
-//    for (auto i=0; i<n_males; ++i) males[i] = true;
-//    auto loci_n = filter_haplotypes(haplotypes, males, margin, n_males, n_haplotypes);
-//    std::cout << "Loci : " << loci_n << std::endl;
 
     auto o = bootstrap(max_neomales, numbers, n_haplotypes, haplotypes, margin, n_threads);
 

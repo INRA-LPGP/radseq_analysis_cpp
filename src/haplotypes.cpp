@@ -126,8 +126,8 @@ int number_of_haplotypes(std::string& file_path, bool* indiv_col, bool* indiv_se
 
                     // Set haplotype to 1 if present in females and count in females is higher than margin
                     haplotype.set(indiv_n, (temp_haplotypes.count(f) and (temp_haplotypes[f] > margin)));
-                    ++indiv_n;
                 }
+                ++indiv_n;
             }
 
             ++field_n;
