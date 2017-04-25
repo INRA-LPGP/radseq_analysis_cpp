@@ -20,12 +20,12 @@ int main(int argc, char *argv[]) {
 
     get_individual_data(file_path, indiv_sexes, indiv_col);
 
-    std::cout << "Individual numbers:" << std::endl;
+    std::cout << "Individual numbers : ";
     std::cout << numbers[0] << ", " << numbers[1] << std::endl;
 
     const int margin = int(std::round(numbers[0] * e));
     const int margin_f = int(std::round(numbers[1] * (1 - e)));
-    std::cout << "Margin : male -> " << margin << " | female -> " << margin_f << std::endl;
+    std::cout << "Margins : male -> " << margin << " | female -> " << margin_f << std::endl;
 
     int n_haplotypes = number_of_haplotypes(file_path, indiv_col, indiv_sexes, margin_f);
 
