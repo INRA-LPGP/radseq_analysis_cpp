@@ -138,7 +138,7 @@ void get_haplotypes(std::string& file_path, bool* indiv_col, bool* indiv_sexes, 
 
                 if (indiv_sexes[indiv_n]) {
 
-                    haplotypes[locus_n][indiv_n] = (!temp_haplotypes.count(f) or (temp_haplotypes[f] < margin));
+                    haplotypes[locus_n][indiv_n] = !(!temp_haplotypes.count(f) or (temp_haplotypes[f] < margin));
                     ++indiv_n;
                 }
             }
@@ -161,7 +161,7 @@ uint32_t filter_haplotypes(bool** haplotypes, bool* males, const int margin, con
     for (int i = 0; i < n_haplotypes; ++i) {
 
         res = 0;
-        for (int j = 0; j < n_males; ++j) res += !(haplotypes[i][j] ^ males[j]);
+        for (int j = n_males; j < n_males; ++j) res += (haplotypes[i][j] ^ males[j]);
         if (res > margin) ++loci_count;
     }
 
