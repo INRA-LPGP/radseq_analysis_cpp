@@ -6,7 +6,7 @@ int main(int argc, char *argv[]) {
 
     std::string file_path = argv[1];
 
-    const float e = 0.90;
+//    const float e = 0.95;
     const int max_neomales = std::stoi(argv[2]);
     const int n_threads = std::stoi(argv[3]);
 
@@ -23,8 +23,11 @@ int main(int argc, char *argv[]) {
     std::cout << "Individual numbers : ";
     std::cout << numbers[0] << ", " << numbers[1] << std::endl;
 
-    const int margin = int(std::round(numbers[0] * e));
-    const int margin_f = int(std::round(numbers[1] * (1 - e)));
+//    const int margin = int(std::round(numbers[0] * e));
+//    const int margin_f = int(std::round(numbers[1] * (1 - e)));
+    const int margin = numbers[0];
+    const int margin_f = 1;
+
     std::cout << "Margins : male -> " << margin << " | female -> " << margin_f << std::endl;
 
     int n_haplotypes = number_of_haplotypes(file_path, indiv_col, indiv_sexes, margin_f);
@@ -38,7 +41,6 @@ int main(int argc, char *argv[]) {
     }
 
     get_haplotypes(file_path, indiv_col, indiv_sexes, haplotypes, margin_f);
-
     auto o = bootstrap(max_neomales, numbers, n_haplotypes, haplotypes, margin, n_threads);
 
     return 0;
