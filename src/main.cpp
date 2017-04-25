@@ -24,14 +24,16 @@ int main(int argc, char *argv[]) {
     std::cout << numbers[0] << ", " << numbers[1] << std::endl;
 
     const int margin = int(std::round(numbers[0] * e));
-    const int margin_f = int(std::round(numbers[0] * (1 - e)));
+    const int margin_f = int(std::round(numbers[1] * (1 - e)));
     std::cout << "Margin : " << margin << std::endl;
 
     int n_haplotypes = number_of_haplotypes(file_path);
 
-    bool** haplotypes;
-    haplotypes = new bool* [n_haplotypes];
-    for (auto i=0; i<n_haplotypes; ++i) haplotypes[i] = new bool[numbers[0]];
+    std::bitset<64> haplotypes[n_haplotypes];
+    for (auto i=0; i<n_haplotypes; ++i){
+        haplotypes[i] = std::bitset<64>();
+        haplotypes[i].set();
+    }
 
     get_haplotypes(file_path, indiv_col, indiv_sexes, haplotypes, margin_f);
 

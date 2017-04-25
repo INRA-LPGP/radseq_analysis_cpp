@@ -1,6 +1,6 @@
 #include "bootstrap.h"
 
-int bootstrap(const int max_neomales, int* numbers, const int n_haplotypes, bool** haplotypes, const int margin, const int n_threads) {
+int bootstrap(const int max_neomales, int* numbers, const int n_haplotypes, std::bitset<64>* haplotypes, const int margin, const int n_threads) {
 
     std::vector<std::vector<int>> combinations;
 
@@ -32,8 +32,8 @@ int bootstrap(const int max_neomales, int* numbers, const int n_haplotypes, bool
 
     for (auto &t : threads) t.join();
 
-    for (auto i=0; i<n_haplotypes; ++i) delete[] haplotypes[i];
-    delete[] haplotypes;
+//    for (auto i=0; i<n_haplotypes; ++i) delete[] haplotypes[i];
+//    delete[] haplotypes;
 
     std::cout << "Results :" << std::endl;
     for (auto r: results) std::cout << r.first << " : " << r.second << std::endl;
@@ -42,17 +42,17 @@ int bootstrap(const int max_neomales, int* numbers, const int n_haplotypes, bool
 }
 
 
-void bootstrap_chunk(int* numbers, const int n_haplotypes, bool** haplotypes, const int margin,
+void bootstrap_chunk(int* numbers, const int n_haplotypes, std::bitset<64>* haplotypes, const int margin,
                      std::vector<std::vector<int>>& combinations, int start, int end, std::map<int, int>& results, std::mutex& results_mutex) {
 
     std::map<int, int> temp_results;
 
-    bool males[numbers[0]];
+    std::bitset<64> males;
 
     for (int i=start; i<end; ++i){
 
-        for (auto i=0; i<numbers[0]; ++i) males[i] = true;
-        for (auto c: combinations[i]) males[c] = false;
+        males.set();
+        for (auto c: combinations[i]) males.flip(c);
 
         ++(temp_results[filter_haplotypes(haplotypes, males, margin, numbers[0], n_haplotypes)]);
     }

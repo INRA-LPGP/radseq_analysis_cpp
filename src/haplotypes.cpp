@@ -100,7 +100,7 @@ int number_of_haplotypes(std::string& file_path) {
 }
 
 
-void get_haplotypes(std::string& file_path, bool* indiv_col, bool* indiv_sexes, bool** haplotypes, int margin) {
+void get_haplotypes(std::string& file_path, bool* indiv_col, bool* indiv_sexes, std::bitset<64>* haplotypes, int margin) {
 
     std::ifstream haplotype_file(file_path);
     std::string line;
@@ -138,7 +138,8 @@ void get_haplotypes(std::string& file_path, bool* indiv_col, bool* indiv_sexes, 
 
                 if (indiv_sexes[indiv_n]) {
 
-                    haplotypes[locus_n][indiv_n] = !(!temp_haplotypes.count(f) or (temp_haplotypes[f] < margin));
+                    // Set haplotype to 1 if present in females and count in females is higher than margin
+                    haplotypes[locus_n].set(indiv_n, (temp_haplotypes.count(f) and (temp_haplotypes[f] > margin)));
                     ++indiv_n;
                 }
             }
@@ -153,15 +154,21 @@ void get_haplotypes(std::string& file_path, bool* indiv_col, bool* indiv_sexes, 
 }
 
 
-uint32_t filter_haplotypes(bool** haplotypes, bool* males, const int margin, const int n_males, const int n_haplotypes) {
+uint32_t filter_haplotypes(std::bitset<64>* haplotypes, std::bitset<64>& males, const int margin, const int n_males, const int n_haplotypes) {
 
     uint32_t loci_count = 0;
     int res = 0;
 
     for (int i = 0; i < n_haplotypes; ++i) {
-
         res = 0;
-        for (int j = n_males; j < n_males; ++j) res += (haplotypes[i][j] ^ males[j]);
+//        for (int j = n_males; j < n_males; ++j) res += (haplotypes[i][j] ^ males[j]);
+//        for (int n=0; n<64; ++n) std::cout << haplotypes[i][n] << " | ";
+//        std::cout << std::endl;
+//        for (int n=0; n<64; ++n) std::cout << males[n] << " | ";
+//        std::cout << std::endl;
+        res = (haplotypes[i] ^ males).count();
+//        std::cout << res << std::endl << std::endl;
+
         if (res > margin) ++loci_count;
     }
 
