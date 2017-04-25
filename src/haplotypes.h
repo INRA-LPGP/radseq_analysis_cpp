@@ -4,6 +4,7 @@
 #include <bitset>
 
 #define BIT_SIZE 64
+#define MALE_MIN 61
 
 int get_numbers(std::string& file_path, int* numbers);
 

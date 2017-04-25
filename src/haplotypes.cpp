@@ -133,7 +133,7 @@ int number_of_haplotypes(std::string& file_path, bool* indiv_col, bool* indiv_se
             ++field_n;
         }
 
-        if (haplotype.count() != BIT_SIZE){
+        if (haplotype.count() < MALE_MIN){
             ++locus_n;
         }
     }
@@ -194,7 +194,7 @@ void get_haplotypes(std::string& file_path, bool* indiv_col, bool* indiv_sexes, 
             ++field_n;
         }
 
-        if (haplotype.count() != BIT_SIZE) {
+        if (haplotype.count() < MALE_MIN) {
             haplotypes[locus_n] = haplotype;
             ++locus_n;
         }
