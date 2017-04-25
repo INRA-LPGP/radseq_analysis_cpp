@@ -1,20 +1,20 @@
 #include "bootstrap.h"
 
-int bootstrap(const int max_neomales, int* numbers, const int n_haplotypes, std::bitset<64>* haplotypes, const int margin, const int n_threads) {
+int bootstrap(const int max_neomales, int* numbers, const int n_haplotypes, std::bitset<BIT_SIZE>* haplotypes, const int margin, const int n_threads) {
 
     std::vector<std::vector<int>> combinations;
 
-    for (int i = 1; i <= max_neomales; ++i){
+    for (int i = 0; i <= max_neomales; ++i){
 
         comb(numbers[0], i, combinations);
     }
 
     int start = 0, end = 0;
-    int chunk_size = std::ceil(combinations.size() / 4);
+    int chunk_size = std::ceil(combinations.size() / n_threads);
 
     std::map<int, int> results;
 
-    std::cout << "Number of permutations : " << combinations.size() + 1 << std::endl;
+    std::cout << "Number of permutations : " << combinations.size() << std::endl;
 
     std::vector<std::thread> threads;
     threads.resize(0);
@@ -24,7 +24,7 @@ int bootstrap(const int max_neomales, int* numbers, const int n_haplotypes, std:
 
         start = chunk_size * t;
         end = chunk_size * (t + 1) - 1;
-        if ((t == n_threads - 1) and (end != int(combinations.size()) - 1)) end = combinations.size();
+        if ((t == n_threads - 1) and (end != int(combinations.size() - 1))) end = combinations.size() - 1;
         std::cout << "Chunk " << t << " : " <<start << ", " << end << std::endl;
 
         threads.push_back(std::thread(bootstrap_chunk, n_haplotypes, haplotypes, margin, std::ref(combinations), start, end, std::ref(results), std::ref(results_mutex)));
@@ -39,14 +39,14 @@ int bootstrap(const int max_neomales, int* numbers, const int n_haplotypes, std:
 }
 
 
-void bootstrap_chunk(const int n_haplotypes, std::bitset<64>* haplotypes, const int margin,
+void bootstrap_chunk(const int n_haplotypes, std::bitset<BIT_SIZE>* haplotypes, const int margin,
                      std::vector<std::vector<int>>& combinations, int start, int end, std::map<int, int>& results, std::mutex& results_mutex) {
 
     std::map<int, int> temp_results;
 
-    std::bitset<64> males;
+    std::bitset<BIT_SIZE> males;
 
-    for (int i=start; i<end; ++i){
+    for (int i=start; i<=end; ++i){
 
         males.set();
         for (auto c: combinations[i]) males.flip(c);

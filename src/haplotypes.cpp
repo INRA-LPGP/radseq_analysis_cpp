@@ -82,25 +82,7 @@ void get_individual_data(std::string& file_path, bool* indiv_sexes, bool* indiv_
 }
 
 
-int number_of_haplotypes(std::string& file_path) {
-
-    std::ifstream haplotype_file(file_path);
-    std::string line;
-    std::getline(haplotype_file, line);
-    int hap_n = 0;
-
-    while (std::getline(haplotype_file, line)) {
-
-        ++hap_n;
-    }
-
-    haplotype_file.close();
-
-    return hap_n;
-}
-
-
-void get_haplotypes(std::string& file_path, bool* indiv_col, bool* indiv_sexes, std::bitset<64>* haplotypes, int margin) {
+int number_of_haplotypes(std::string& file_path, bool* indiv_col, bool* indiv_sexes, int margin) {
 
     std::ifstream haplotype_file(file_path);
     std::string line;
@@ -112,12 +94,16 @@ void get_haplotypes(std::string& file_path, bool* indiv_col, bool* indiv_sexes, 
     std::unordered_map<std::string, int> temp_haplotypes;
     std::string top_haplotype;
 
+    std::bitset<BIT_SIZE> haplotype;
+
     while (std::getline(haplotype_file, line)) {
 
         temp_haplotypes.clear();
         indiv_n = 0, field_n = 0;
         fields = split(line, "\t");
         top_haplotype = "";
+
+        haplotype.set();
 
         for (auto f: fields) {
 
@@ -139,7 +125,7 @@ void get_haplotypes(std::string& file_path, bool* indiv_col, bool* indiv_sexes, 
                 if (indiv_sexes[indiv_n]) {
 
                     // Set haplotype to 1 if present in females and count in females is higher than margin
-                    haplotypes[locus_n].set(indiv_n, (temp_haplotypes.count(f) and (temp_haplotypes[f] > margin)));
+                    haplotype.set(indiv_n, (temp_haplotypes.count(f) and (temp_haplotypes[f] > margin)));
                     ++indiv_n;
                 }
             }
@@ -147,14 +133,78 @@ void get_haplotypes(std::string& file_path, bool* indiv_col, bool* indiv_sexes, 
             ++field_n;
         }
 
-        ++locus_n;
+        if (haplotype.count() != BIT_SIZE){
+            ++locus_n;
+        }
+    }
+
+    haplotype_file.close();
+    return locus_n;
+}
+
+
+void get_haplotypes(std::string& file_path, bool* indiv_col, bool* indiv_sexes, std::bitset<BIT_SIZE>* haplotypes, int margin) {
+
+    std::ifstream haplotype_file(file_path);
+    std::string line;
+    std::getline(haplotype_file, line);
+
+    std::vector<std::string> fields;
+    int field_n = 0, indiv_n = 0, locus_n = 0;
+
+    std::unordered_map<std::string, int> temp_haplotypes;
+    std::string top_haplotype;
+
+    std::bitset<BIT_SIZE> haplotype;
+
+    while (std::getline(haplotype_file, line)) {
+
+        temp_haplotypes.clear();
+        indiv_n = 0, field_n = 0;
+        fields = split(line, "\t");
+        top_haplotype = "";
+
+        haplotype.set();
+
+        for (auto f: fields) {
+
+            if (indiv_col[field_n]) {
+
+                if (not indiv_sexes[indiv_n]) ++temp_haplotypes[f];
+                ++indiv_n;
+            }
+
+            ++field_n;
+        }
+
+        field_n = 0, indiv_n = 0;
+
+        for (auto f: fields){
+
+            if (indiv_col[field_n]) {
+
+                if (indiv_sexes[indiv_n]) {
+
+                    // Set haplotype to 1 if present in females and count in females is higher than margin
+                    haplotype.set(indiv_n, (temp_haplotypes.count(f) and (temp_haplotypes[f] > margin)));
+                    ++indiv_n;
+                }
+            }
+
+            ++field_n;
+        }
+
+        if (haplotype.count() != BIT_SIZE) {
+            haplotypes[locus_n] = haplotype;
+            ++locus_n;
+        }
     }
 
     haplotype_file.close();
 }
 
 
-uint32_t filter_haplotypes(std::bitset<64>* haplotypes, std::bitset<64>& males, const int margin, const int n_haplotypes) {
+uint32_t filter_haplotypes(std::bitset<BIT_SIZE>* haplotypes, std::bitset<BIT_SIZE>& males, const int margin, const int n_haplotypes) {
 
     uint32_t loci_count = 0;
     int res = 0;
@@ -162,7 +212,7 @@ uint32_t filter_haplotypes(std::bitset<64>* haplotypes, std::bitset<64>& males, 
     for (int i = 0; i < n_haplotypes; ++i) {
         res = 0;
         res = (haplotypes[i] ^ males).count();
-
+//        std::cout << haplotypes[i].to_string() << std::endl << males.to_string() << std::endl << res << std::endl << std::endl;
         if (res > margin) ++loci_count;
     }
 
