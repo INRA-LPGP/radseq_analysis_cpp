@@ -24,14 +24,20 @@ int main(int argc, char *argv[]) {
     std::cout << numbers[0] << ", " << numbers[1] << std::endl;
 
     const int margin = int(std::round(numbers[0] * e));
-    const int margin_f = int(std::round(numbers[0] * (1 - e)));
+    const int margin_f = int(std::round(numbers[1] * (1 - e)));
     std::cout << "Margin : " << margin << std::endl;
 
-    int n_haplotypes = number_of_haplotypes(file_path);
+    int n_haplotypes = number_of_haplotypes(file_path, indiv_col, indiv_sexes, margin_f);
 
-    bool** haplotypes;
-    haplotypes = new bool* [n_haplotypes];
-    for (auto i=0; i<n_haplotypes; ++i) haplotypes[i] = new bool[numbers[0]];
+    std::cout << "Haplotypes found: " << n_haplotypes << std::endl;
+
+    std::bitset<BIT_SIZE> haplotypes[n_haplotypes];
+    for (auto i=0; i<n_haplotypes; ++i){
+        haplotypes[i] = std::bitset<BIT_SIZE>();
+        haplotypes[i].set();
+    }
+
+    std::cout << "SIZE : " << sizeof(haplotypes[0]) << std::endl;
 
     get_haplotypes(file_path, indiv_col, indiv_sexes, haplotypes, margin_f);
 
@@ -39,8 +45,6 @@ int main(int argc, char *argv[]) {
 //            for (auto j=0; j<n_indiv; ++j) std::cout << haplotypes[i][j] << " - ";
 //            std::cout << std::endl;
 //        }
-
-    std::cout << "Haplotypes found: " << n_haplotypes << std::endl;
 
 //    int n_males = numbers[0];
 //    bool males[n_males];
