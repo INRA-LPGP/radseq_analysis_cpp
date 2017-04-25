@@ -161,7 +161,7 @@ uint32_t filter_haplotypes(bool** haplotypes, bool* males, const int margin, con
     for (int i = 0; i < n_haplotypes; ++i) {
 
         res = 0;
-        for (int j = n_males; j < n_males; ++j) res += (haplotypes[i][j] ^ males[j]);
+        for (int j = 0; j < n_males; ++j) res += (haplotypes[i][j] ^ males[j]);
         if (res > margin) ++loci_count;
     }
 
