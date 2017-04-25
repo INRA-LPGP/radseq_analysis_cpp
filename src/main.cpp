@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
 
 //    const int margin = int(std::round(numbers[0] * e));
 //    const int margin_f = int(std::round(numbers[1] * (1 - e)));
-    const int margin = numbers[0];
+    const int margin = numbers[0] - 1;
     const int margin_f = 1;
 
     std::cout << "Margins : male -> " << margin << " | female -> " << margin_f << std::endl;

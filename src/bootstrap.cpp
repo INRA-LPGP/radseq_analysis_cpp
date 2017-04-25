@@ -50,6 +50,7 @@ void bootstrap_chunk(const int n_haplotypes, std::bitset<BIT_SIZE>* haplotypes, 
 
     int chunk_size = end - start;
     int chunk_10p = std::round(chunk_size / 10);
+    if (chunk_10p == 0) chunk_10p = 1;
     int p_count = 0;
 
     for (int i=start; i<=end; ++i){
