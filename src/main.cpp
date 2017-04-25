@@ -4,10 +4,11 @@
 
 int main(int argc, char *argv[]) {
 
-    std::string file_path = "/home/rferon/work/code/radseq_analyses_pipeline/results_m_5_n_1_M_3/batch_0.haplotypes.tsv";
+    std::string file_path = argv[1];
 
-    const float e = 0.1;
-    const int max_neomales = 2;
+//    const float e = 0.95;
+    const int max_neomales = std::stoi(argv[2]);
+    const int n_threads = std::stoi(argv[3]);
 
     int numbers[2] {0, 0};
 
@@ -19,30 +20,28 @@ int main(int argc, char *argv[]) {
 
     get_individual_data(file_path, indiv_sexes, indiv_col);
 
-    std::cout << "Individual numbers:" << std::endl;
+    std::cout << "Individual numbers : ";
     std::cout << numbers[0] << ", " << numbers[1] << std::endl;
 
-    const int margins[4] { int(std::round(numbers[0] - e * numbers[0])), int(std::round(e * numbers[0])),
-                           int(std::round(numbers[1] - e * numbers[1])), int(std::round(e * numbers[1])) };
+//    const int margin = int(std::round(numbers[0] * e));
+//    const int margin_f = int(std::round(numbers[1] * (1 - e)));
+    const int margin = numbers[0];
+    const int margin_f = 1;
 
-    int n_haplotypes = number_of_haplotypes(file_path);
+    std::cout << "Margins : male -> " << margin << " | female -> " << margin_f << std::endl;
 
-    int** haplotypes;
-    haplotypes = new int* [n_haplotypes];
-    for (auto i=0; i<n_haplotypes; ++i) haplotypes[i] = new int[n_indiv];
-
-    int haplotype_numbers[n_haplotypes];
-    get_haplotypes(file_path, indiv_col, haplotypes, haplotype_numbers);
+    int n_haplotypes = number_of_haplotypes(file_path, indiv_col, indiv_sexes, margin_f);
 
     std::cout << "Haplotypes found: " << n_haplotypes << std::endl;
 
-    std::vector<uint32_t> loci_n = bootstrap(max_neomales, indiv_sexes, numbers, n_indiv, n_haplotypes, haplotypes, haplotype_numbers, margins);
+    std::bitset<BIT_SIZE> haplotypes[n_haplotypes];
+    for (auto i=0; i<n_haplotypes; ++i){
+        haplotypes[i] = std::bitset<BIT_SIZE>();
+        haplotypes[i].set();
+    }
 
-//    for (auto l: loci_n) std::cout << l << " - ";
-//    std::cout<<std::endl;
-
-    for (auto i=0; i<n_haplotypes; ++i) delete[] haplotypes[i];
-    delete[] haplotypes;
+    get_haplotypes(file_path, indiv_col, indiv_sexes, haplotypes, margin_f);
+    auto o = bootstrap(max_neomales, numbers, n_haplotypes, haplotypes, margin, n_threads);
 
     return 0;
 }
