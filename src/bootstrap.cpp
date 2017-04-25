@@ -27,7 +27,7 @@ int bootstrap(const int max_neomales, int* numbers, const int n_haplotypes, bool
         if ((t == n_threads - 1) and (end != int(combinations.size()) - 1)) end = combinations.size();
         std::cout << "Chunk " << t << " : " <<start << ", " << end << std::endl;
 
-        threads.push_back(std::thread(bootstrap_chunk, numbers, n_haplotypes, haplotypes, margin, &combinations, start, end, &results, &results_mutex));
+        threads.push_back(std::thread(bootstrap_chunk, std::ref(numbers), n_haplotypes, haplotypes, margin, std::ref(combinations), start, end, std::ref(results), std::ref(results_mutex)));
     }
 
     for (auto &t : threads) t.join();
