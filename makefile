@@ -12,7 +12,7 @@ BUILD = $(BASEDIR)/build
 CPP = $(wildcard $(SRC)/*.cpp)
 
 # Target
-TARGET = radseq_analysis
+TARGET = radseq_bootstrap
 
 # Variables
 OBJS = $(addprefix $(BUILD)/, $(notdir $(CPP:.cpp=.o)))

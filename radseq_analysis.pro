@@ -11,7 +11,8 @@ SOURCES += src/main.cpp \
 HEADERS += \
     src/utils.h \
     src/bootstrap.h \
-    src/haplotypes.h
+    src/haplotypes.h \
+    src/arg_parser.h
 
 INCLUDEPATH += lib/zlib-1.2.11/
 QMAKE_CXXFLAGS +=
