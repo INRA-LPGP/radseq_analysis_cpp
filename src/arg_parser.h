@@ -34,8 +34,8 @@ class ArgParser {
 
         const std::string set_value(const std::string& field, const std::map<std::string, std::vector<std::string>>& options) {
 
-            if (this->contains(field)) return this->get_value("-n");
-            else  return options.at(std::string("-n"))[0];
+            if (this->contains(field)) return this->get_value(field);
+            else  return options.at(std::string(field))[0];
         }
 
     private:

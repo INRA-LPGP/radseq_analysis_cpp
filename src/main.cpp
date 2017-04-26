@@ -66,6 +66,7 @@ int main(int argc, char *argv[]) {
     }
 
     get_haplotypes(file_path, indiv_col, indiv_sexes, haplotypes, margin_f);
+
     bootstrap(max_neomales, numbers, n_haplotypes, haplotypes, margin, n_threads);
 
     return 0;
