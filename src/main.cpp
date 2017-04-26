@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
     std::cout << "Individual numbers : ";
     std::cout << numbers[0] << ", " << numbers[1] << std::endl;
 
-    const int margin = numbers[0] - 1;
+    const int margin = numbers[0];
     const int margin_f = 1;
 
     std::cout << "Margins : male -> " << margin << " | female -> " << margin_f << std::endl;
