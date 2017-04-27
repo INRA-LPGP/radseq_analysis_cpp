@@ -1,5 +1,6 @@
 #include "bootstrap.h"
 
+// Main bootstrap function: split work into threads and export results
 void bootstrap(const int max_neomales, int* numbers, const int n_haplotypes, std::bitset<BIT_SIZE>* haplotypes, const int margin, const int n_threads,
                const std::string& output_path, const std::string& log_path) {
 
@@ -59,6 +60,7 @@ void bootstrap(const int max_neomales, int* numbers, const int n_haplotypes, std
 }
 
 
+// Process a chunk of combinations with filter_haplotypes
 void bootstrap_chunk(const int n_haplotypes, std::bitset<BIT_SIZE>* haplotypes, const int margin,
                      std::vector<std::vector<int>>& combinations, const int start, const int end,
                      std::map<int, int>& results, std::map<int, int>& individuals, std::mutex& results_mutex,
