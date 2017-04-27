@@ -1,6 +1,22 @@
 #include "arg_parser.h"
 #include "bootstrap.h"
 
+#define STDOUT "/dev/stdout"
+
+
+const std::string log_file(const std::string output_path){
+
+    if (output_path != STDOUT) {
+
+        return output_path + std::string(".log");
+
+    } else {
+
+        return std::string("radseq_bootstrap.log");
+
+    }
+}
+
 int main(int argc, char *argv[]) {
 
     ArgParser cmd_options(argc, argv);
@@ -10,7 +26,7 @@ int main(int argc, char *argv[]) {
                                                                     {"-f", {"", "string", "path to a stacks haplotypes file"} },
                                                                     {"-n", {"0", "int", "maximum number of neomales"} },
                                                                     {"-t", {"1", "int", "number of threads"} },
-                                                                    {"-o", {"stdout", "string", "output file"} }
+                                                                    {"-o", {"/dev/stdout", "string", "output file"} }
                                                                   };
 
     if (cmd_options.contains("-h")) {
@@ -33,6 +49,18 @@ int main(int argc, char *argv[]) {
     }
 
     const std::string file_path = cmd_options.set_value(std::string("-f"), options);
+    const std::string output_path = cmd_options.set_value(std::string("-o"), options);
+    const std::string log_path = log_file(output_path);
+
+    std::ofstream log_file(log_path);
+    char time[DTTMSZ];
+
+    log_file << "Job started: " << print_time(time) << std::endl << std::endl;
+    log_file << "Options: " << std::endl;
+    for (auto o: options) {
+        log_file << "\t" << o.first << " : " << cmd_options.set_value(std::string(o.first), options) << std::endl;
+    }
+    log_file << std::endl;
 
     const int max_neomales = std::stoi(cmd_options.set_value(std::string("-n"), options));
     const int n_threads = std::stoi(cmd_options.set_value(std::string("-t"), options));
@@ -47,17 +75,20 @@ int main(int argc, char *argv[]) {
 
     get_individual_data(file_path, indiv_sexes, indiv_col);
 
-    std::cout << "Individual numbers : ";
-    std::cout << numbers[0] << ", " << numbers[1] << std::endl;
+    log_file << "Number of individuals : ";
+    log_file << numbers[0] << " males, " << numbers[1] << " females" << std::endl;
 
     const int margin = numbers[0];
     const int margin_f = 1;
 
-    std::cout << "Margins : male -> " << margin << " | female -> " << margin_f << std::endl;
+    log_file << "Margins : ";
+    log_file << " Min males [" << margin << "]  | Max females [" << margin_f << "]" << std::endl;
 
     const int n_haplotypes = number_of_haplotypes(file_path, indiv_col, indiv_sexes, margin_f);
 
-    std::cout << "Haplotypes found: " << n_haplotypes << std::endl;
+    log_file << "Haplotypes found : " << n_haplotypes << std::endl;
+
+    log_file.close();
 
     std::bitset<BIT_SIZE> haplotypes[n_haplotypes];
     for (auto i=0; i<n_haplotypes; ++i){
@@ -67,7 +98,7 @@ int main(int argc, char *argv[]) {
 
     get_haplotypes(file_path, indiv_col, indiv_sexes, haplotypes, margin_f);
 
-    bootstrap(max_neomales, numbers, n_haplotypes, haplotypes, margin, n_threads);
+    bootstrap(max_neomales, numbers, n_haplotypes, haplotypes, margin, n_threads, output_path, log_path);
 
     return 0;
 }
