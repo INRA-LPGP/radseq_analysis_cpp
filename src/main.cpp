@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
     log_file << "Number of individuals : ";
     log_file << numbers[0] << " males, " << numbers[1] << " females" << std::endl;
 
-    const int margin = numbers[0];
+    const int margin = numbers[0] - 1; // -1 necessary to be able to compare strictly (>) inside filter_haplotypes
     const int margin_f = 1;
 
     log_file << "Margins : ";
