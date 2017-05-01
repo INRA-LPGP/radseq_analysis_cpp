@@ -4,72 +4,42 @@
 void bootstrap(const int max_neomales, int* numbers, const int n_haplotypes, std::bitset<BIT_SIZE>* haplotypes, const int margin, const int n_threads,
                const std::string& output_path, const std::string& log_path) {
 
-    std::vector<int> comb_number, thread_start;
+    std::vector<int> comb_numbers, thread_start;
     thread_start.resize(n_threads);
-    std::vector<std::vector<int>> combinations;
 
     for (int i = 0; i <= max_neomales; ++i){
-
-        comb_number.push_back(number_of_combinations(numbers[0], i));
+        comb_numbers.push_back(number_of_combinations(numbers[0], i));
     }
-
-    std::ofstream log_file(log_path, std::fstream::app);
-    char time[DTTMSZ];
-    log_file << "Number of permutations : " << comb_number << std::endl;
 
     std::string bitmask(max_neomales, 1); // K leading 1's
     bitmask.resize(numbers[0], 0); // N-K trailing 0's
 
-    int start = 0, end = 0, chunk_div = 0, chunk_mod = 0;
-
-    std::map<int, int> results;
-    std::map<int, int> individuals;
-
     std::vector<std::thread> threads;
-    std::vector<int> completion;
-    for (auto i=0; i<n_threads; ++i) completion.push_back(0);
-    std::mutex results_mutex;
 
     for (int m=0; m<max_neomales; ++m) {
 
-        chunk_div = std::floor(comb_number[m] / n_threads);
-        chunk_mod = comb_number % n_threads;
+        chunk_div = std::floor(comb_numbers[m] / n_threads);
+        chunk_mod = comb_numbers % n_threads;
         thread_start[0] = 0;
         for (auto t=1; t < n_threads; ++t) {
         }
-
-        log_file << std::endl << "---------- Allocating data to threads ----------" << std::endl << std::endl;
 
         for (int t = 0; t < n_threads; ++t) {
 
             start = chunk_size * t;
             end = chunk_size * (t + 1) - 1;
             if ((t == n_threads - 1) and (end != int(combinations.size() - 1))) end = combinations.size() - 1;
-            log_file << print_time(time) << "\t" << "Allocating data to thread " << t+1 << " : [" <<start << ", " << end << "]" << std::endl;
 
             threads.push_back(std::thread(bootstrap_chunk, n_haplotypes, haplotypes, margin, std::ref(combinations), start, end,
                                           std::ref(results), std::ref(individuals), std::ref(results_mutex), std::ref(log_file), t+1, std::ref(completion)));
 
-            if (t == 0) results_mutex.lock();
         }
 
-        log_file << std::endl << "---------- Processing data ----------" << std::endl << std::endl;
-        results_mutex.unlock();
+
+
 
         for (auto &t : threads) t.join();
     }
-
-
-
-    std::ofstream output_file(output_path);
-    output_file << "# Loci number results" << std::endl;
-    output_file << "Loci_number" << "\t" << "Count" << std::endl;
-    for (auto r: results)output_file << r.first << "\t" << r.second << std::endl;
-    output_file << std::endl << "# Individual results" << std::endl;
-    output_file << "Individual" << "\t" << "Loci_number" << std::endl;
-    for (auto i: individuals) output_file << i.first << "\t" << i.second << std::endl;
-
-    log_file << std::endl << print_time(time) << "\t" << "Process ended normally." << std::endl;
 }
 
 

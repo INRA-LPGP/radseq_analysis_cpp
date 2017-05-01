@@ -29,26 +29,25 @@ std::vector<std::string> split(std::string str, const std::string delimiter){
 
 
 // Generates combinations of K in N
-void comb(int N, int K, std::vector<std::vector<int>>& combinations) {
-
-    std::string bitmask(K, 1); // K leading 1's
-    bitmask.resize(N, 0); // N-K trailing 0's
+std::vector<int> comb(int N, int K, std::string& bitmask) {
 
     std::vector<int> combination(K);
+    std::prev_permutation(bitmask.begin(), bitmask.end());
     int c = 0;
 
-    do {
-        c = 0;
-        for (int i = 0; i < N; ++i) { // [0..N-1] integers
+    for (int i = 0; i < N; ++i) { // [0..N-1] integers
 
-            if (bitmask[i]) {
-                combination[c] = i;
-                ++c;
-            }
+        if (bitmask[i]) {
+            combination[c] = i;
+            ++c;
         }
+    }
 
-        combinations.push_back(combination);
+    return combination;
+}
 
-    } while (std::prev_permutation(bitmask.begin(), bitmask.end()));
 
+int number_of_combinations(int N, int K) {
+
+    return std::tgamma(N+1) / (std::tgamma(K+1) * std::tgamma(N-K+1));
 }

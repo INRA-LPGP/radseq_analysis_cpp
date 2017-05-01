@@ -6,7 +6,8 @@ CONFIG -= qt
 SOURCES += src/main.cpp \
     src/utils.cpp \
     src/bootstrap.cpp \
-    src/haplotypes.cpp
+    src/haplotypes.cpp \
+    src/bootstrap_copy.cpp
 
 HEADERS += \
     src/utils.h \
