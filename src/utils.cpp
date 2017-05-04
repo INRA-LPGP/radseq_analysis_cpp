@@ -36,7 +36,6 @@ std::vector<int> comb(int N, int K, std::string& bitmask) {
     int c = 0;
 
     for (int i = 0; i < N; ++i) { // [0..N-1] integers
-
         if (bitmask[i]) {
             combination[c] = i;
             ++c;
@@ -47,7 +46,7 @@ std::vector<int> comb(int N, int K, std::string& bitmask) {
 }
 
 
-int number_of_combinations(int N, int K) {
+int get_n_comb(int N, int K) {
 
     return std::tgamma(N+1) / (std::tgamma(K+1) * std::tgamma(N-K+1));
 }

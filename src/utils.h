@@ -19,6 +19,6 @@ char* print_time (char *buff);
 std::vector<std::string> split(std::string str, const std::string delimiter);
 
 // Generates combinations of K in N
-std::vector<int> comb(int N, int K, std::vector<std::vector<int>>& combinations);
+std::vector<int> comb(int N, int K, std::string& bitmask);
 
-int number_of_combinations(int N, int K);
+int get_n_comb(int N, int K);
