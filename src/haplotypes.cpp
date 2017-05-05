@@ -82,14 +82,14 @@ void get_individual_data(const std::string& file_path, bool* indiv_sexes, bool* 
 }
 
 
-const int number_of_haplotypes(const std::string& file_path, bool* indiv_col, bool* indiv_sexes, const int margin) {
+const std::pair<int, int> number_of_haplotypes(const std::string& file_path, bool* indiv_col, bool* indiv_sexes, const int margin) {
 
     std::ifstream haplotype_file(file_path);
     std::string line;
     std::getline(haplotype_file, line);
 
     std::vector<std::string> fields;
-    int field_n = 0, indiv_n = 0, locus_n = 0;
+    int field_n = 0, indiv_n = 0, locus_n = 0, total_n = 0;
 
     std::unordered_map<std::string, int> temp_haplotypes;
     std::string top_haplotype;
@@ -129,17 +129,17 @@ const int number_of_haplotypes(const std::string& file_path, bool* indiv_col, bo
                 }
                 ++indiv_n;
             }
-
             ++field_n;
         }
 
-        if (haplotype.count() < MALE_MIN){
+        if (haplotype.count() < MALE_MAX) { // Haplotype is discarded if too few males diverge from females (no sex specific signal at all)
             ++locus_n;
         }
+        ++total_n;
     }
 
     haplotype_file.close();
-    return locus_n;
+    return std::pair<int, int>(locus_n, total_n);
 }
 
 
@@ -191,16 +191,14 @@ void get_haplotypes(const std::string& file_path, bool* indiv_col, bool* indiv_s
                 }
                 ++indiv_n;
             }
-
             ++field_n;
         }
 
-        if (haplotype.count() < MALE_MIN) {
-            haplotypes[locus_n] = haplotype;
+        if (haplotype.count() < MALE_MAX) { // Haplotype is discarded if too few males diverge from females (no sex specific signal at all)
+            haplotypes[locus_n] = haplotype.flip();
             ++locus_n;
         }
     }
-
     haplotype_file.close();
 }
 
