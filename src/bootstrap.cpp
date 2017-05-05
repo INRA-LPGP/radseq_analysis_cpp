@@ -1,5 +1,10 @@
 #include "bootstrap.h"
 
+struct Result {
+    std::vector<int> combination;
+    uint loci;
+} best_combination;
+
 // Main bootstrap function: split work into threads and export results
 void bootstrap(const int max_neomales, int* numbers, const int n_haplotypes, std::bitset<BIT_SIZE>* haplotypes, const int margin, const int n_threads,
                const std::string& output_path, const std::string& log_path) {
@@ -77,6 +82,12 @@ void bootstrap(const int max_neomales, int* numbers, const int n_haplotypes, std
     output_file << std::endl << "# Individual results" << std::endl;
     output_file << "Individual" << "\t" << "Loci_number" << std::endl;
     for (auto i: individuals) output_file << i.first << "\t" << i.second << std::endl;
+    output_file << std::endl << "# Best combination" << std::endl;
+    for(uint i = 0; i < best_combination.combination.size(); ++i) {
+        output_file << best_combination.combination[i];
+        if (i != best_combination.combination.size() - 1 ) output_file << ", ";
+        else output_file << std::endl;
+    }
 
     log_file << std::endl << print_time(time) << "\t" << "Process ended normally." << std::endl;
 }
@@ -103,13 +114,21 @@ void bootstrap_chunk(const int n_haplotypes, std::bitset<BIT_SIZE>* haplotypes, 
         males.reset();
         for (auto c: combination) males.flip(c);
         res = filter_haplotypes(haplotypes, males, margin, n_haplotypes);
+        if (res > best_combination.loci) {
+            results_mutex.lock();
+            best_combination.combination = combination;
+            best_combination.loci = res;
+            results_mutex.unlock();
+        }
         ++(temp_results[res]);
         for (auto c: combination) temp_individuals[c] += res;
         combination = comb(n_males, n_neomales + 1, bitmask);
     }
 
     results_mutex.lock();
-    for (auto r: temp_results) results[r.first] += r.second;
+    for (auto r: temp_results) {
+        results[r.first] += r.second;
+    }
     for (auto i: temp_individuals) individuals[i.first] += i.second;
     results_mutex.unlock();
 }
