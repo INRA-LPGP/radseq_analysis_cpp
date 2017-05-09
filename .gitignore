@@ -78,4 +78,7 @@ callgrind*
 data/
 optimization.txt
 *test*
+res/
+*.log
+
 

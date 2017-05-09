@@ -78,15 +78,15 @@ int main(int argc, char *argv[]) {
     log_file << "Number of individuals : ";
     log_file << numbers[0] << " males, " << numbers[1] << " females" << std::endl;
 
-    const int margin = numbers[0] - 1; // -1 necessary to be able to compare strictly (>) inside filter_haplotypes
-    const int margin_f = 1;
+    const int margin = numbers[0] - 1; // -1 necessary to compare strictly in filter_haplotypes (faster comparison)
 
     log_file << "Margins : ";
-    log_file << " Min males [" << margin << "]  | Max females [" << margin_f << "]" << std::endl;
+    log_file << " Min males [" << margin + 1 << "]  | Max females [" << margin_f << "]" << std::endl;
 
-    const int n_haplotypes = number_of_haplotypes(file_path, indiv_col, indiv_sexes, margin_f);
+    const std::pair<int, int> haplotypes_numbers = number_of_haplotypes(file_path, indiv_col, indiv_sexes, margin_f);
+    const int n_haplotypes = haplotypes_numbers.first;
 
-    log_file << "Haplotypes found : " << n_haplotypes << std::endl;
+    log_file << "Total haplotypes : " << haplotypes_numbers.second << " | Sex-variable haplotypes : " << n_haplotypes << std::endl;
 
     log_file.close();
 

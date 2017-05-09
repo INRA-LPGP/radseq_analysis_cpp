@@ -7,6 +7,7 @@
 #include <map>
 #include <algorithm>
 #include <time.h>
+#include <cmath>
 
 #define DTTMFMT "%Y-%m-%d %H:%M:%S"
 #define DTTMSZ 21
@@ -18,4 +19,6 @@ char* print_time (char *buff);
 std::vector<std::string> split(std::string str, const std::string delimiter);
 
 // Generates combinations of K in N
-void comb(int N, int K, std::vector<std::vector<int>>& combinations);
+std::vector<int> comb(int N, int K, std::string& bitmask);
+
+int get_n_comb(int N, int K);
