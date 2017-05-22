@@ -24,7 +24,6 @@ int main(int argc, char *argv[]) {
     // Options: flag -> [default, type, help message]
     std::map<std::string, std::vector<std::string>> const options { {"-h", {"0", "bool", "prints this message"} },
                                                                     {"-f", {"", "string", "path to a stacks haplotypes file"} },
-                                                                    {"-n", {"0", "int", "maximum number of neomales"} },
                                                                     {"-t", {"1", "int", "number of threads"} },
                                                                     {"-o", {"/dev/stdout", "string", "output file"} }
                                                                   };
@@ -62,7 +61,6 @@ int main(int argc, char *argv[]) {
     }
     log_file << std::endl;
 
-    const int max_neomales = std::stoi(cmd_options.set_value(std::string("-n"), options));
     const int n_threads = std::stoi(cmd_options.set_value(std::string("-t"), options));
 
     int numbers[2] {0, 0};
@@ -99,7 +97,7 @@ int main(int argc, char *argv[]) {
 
     get_haplotypes(file_path, indiv_col, indiv_sexes, haplotypes, margin_f);
 
-    bootstrap(max_neomales, numbers, n_haplotypes, haplotypes, margin, n_threads, output_path, log_path);
+    bootstrap(numbers, n_haplotypes, haplotypes, margin, n_threads, output_path, log_path);
 
     return 0;
 }

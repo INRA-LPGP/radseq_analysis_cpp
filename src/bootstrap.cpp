@@ -6,7 +6,7 @@ struct Result {
 } best_combination;
 
 // Main bootstrap function: split work into threads and export results
-void bootstrap(const int max_neomales, int* numbers, const int n_haplotypes, std::bitset<BIT_SIZE>* haplotypes, const int margin, const int n_threads,
+void bootstrap(int* numbers, const int n_haplotypes, std::bitset<BIT_SIZE>* haplotypes, const int margin, const int n_threads,
                const std::string& output_path, const std::string& log_path) {
 
     std::ofstream log_file(log_path, std::fstream::app);
@@ -15,7 +15,11 @@ void bootstrap(const int max_neomales, int* numbers, const int n_haplotypes, std
     std::vector<int> n_comb, thread_start;
     thread_start.resize(n_threads+1);
 
-    for (int i = 1; i <= max_neomales; ++i){
+    // Check for 1/3 to 2/3 neomales
+    const int min_neomales = std::round(numbers[0] / 3);
+    const int max_neomales = std::round(2 * numbers[0] / 3);
+
+    for (int i = min_neomales; i <= max_neomales; ++i){
 
         n_comb.push_back(get_n_comb(numbers[0], i));
     }
@@ -36,11 +40,11 @@ void bootstrap(const int max_neomales, int* numbers, const int n_haplotypes, std
 
     int div=0, remainder=0, start=0, end=0;
 
-    for (int m = 0; m < max_neomales; ++m) {
+    for (uint m = 0; m < n_comb.size(); ++m) {
 
         threads.resize(0);
 
-        log_file << std::endl << "---------- Number of neomales: " << m + 1 << " (" << n_comb[m] << " combinations) ----------" << std::endl;
+        log_file << std::endl << "---------- Number of neomales: " << min_neomales + m << " (" << n_comb[m] << " combinations) ----------" << std::endl;
 
         bitmask = std::string(m, 1); // K leading 1's
         bitmask.resize(numbers[0], 0); // N-K trailing 0's
