@@ -21,4 +21,4 @@ std::vector<std::string> split(std::string str, const std::string delimiter);
 // Generates combinations of K in N
 std::vector<int> comb(int N, int K, std::string& bitmask);
 
-int get_n_comb(int N, int K);
+int64_t get_n_comb(int N, int K);

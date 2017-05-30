@@ -12,7 +12,7 @@ void bootstrap(Infos& infos, const int n_haplotypes, std::bitset<BIT_SIZE>* hapl
     std::ofstream log_file(log_path, std::fstream::app);
     char time[DTTMSZ];
 
-    std::vector<int> n_comb, thread_start;
+    std::vector<int64_t> n_comb, thread_start;
     thread_start.resize(n_threads+1);
 
     // Check for 1/3 to 2/3 neomales
@@ -96,6 +96,8 @@ void bootstrap(Infos& infos, const int n_haplotypes, std::bitset<BIT_SIZE>* hapl
     log_file << std::endl << print_time(time) << "\t" << "Process ended normally." << std::endl;
 }
 
+
+
 // Process a chunk of combinations with filter_haplotypes
 void bootstrap_chunk(const int n_haplotypes, std::bitset<BIT_SIZE>* haplotypes, const int margin,
                      const int start, const int end, std::string bitmask, const int n_males, const int n_neomales,
@@ -117,9 +119,7 @@ void bootstrap_chunk(const int n_haplotypes, std::bitset<BIT_SIZE>* haplotypes, 
     for (int i=start; i<=end; ++i) {
         males.reset();
         for (auto c: combination) males.flip(c);
-//        std::cout << males.to_string() << std::endl;
         res = filter_haplotypes(haplotypes, males, margin, n_haplotypes);
-//        std::cout << res << std::endl;
         if (res > best_combination.loci) {
             results_mutex.lock();
             best_combination.combination = combination;

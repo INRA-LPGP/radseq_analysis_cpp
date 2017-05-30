@@ -46,7 +46,7 @@ std::vector<int> comb(int N, int K, std::string& bitmask) {
 }
 
 
-int get_n_comb(int N, int K) {
+int64_t get_n_comb(int N, int K) {
 
-    return std::tgamma(N+1) / (std::tgamma(K+1) * std::tgamma(N-K+1));
+    return int64_t(std::tgamma(N+1) / (std::tgamma(K+1) * std::tgamma(N-K+1)));
 }
