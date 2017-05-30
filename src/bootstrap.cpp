@@ -6,7 +6,7 @@ struct Result {
 } best_combination;
 
 // Main bootstrap function: split work into threads and export results
-void bootstrap(int* numbers, const int n_haplotypes, std::bitset<BIT_SIZE>* haplotypes, const int margin, const int n_threads,
+void bootstrap(Infos& infos, const int n_haplotypes, std::bitset<BIT_SIZE>* haplotypes, const int margin, const int n_threads,
                const std::string& output_path, const std::string& log_path) {
 
     std::ofstream log_file(log_path, std::fstream::app);
@@ -16,12 +16,12 @@ void bootstrap(int* numbers, const int n_haplotypes, std::bitset<BIT_SIZE>* hapl
     thread_start.resize(n_threads+1);
 
     // Check for 1/3 to 2/3 neomales
-    const int min_neomales = std::round(numbers[0] / 3);
-    const int max_neomales = std::round(2 * numbers[0] / 3);
+    const int min_neomales = std::round(infos.n_males / 3);
+    const int max_neomales = std::round(2 * infos.n_males / 3);
 
     for (int i = min_neomales; i <= max_neomales; ++i){
 
-        n_comb.push_back(get_n_comb(numbers[0], i));
+        n_comb.push_back(get_n_comb(infos.n_males, i));
     }
 
     uint n_comb_total = std::accumulate(n_comb.begin(), n_comb.end(), 0);
@@ -46,8 +46,8 @@ void bootstrap(int* numbers, const int n_haplotypes, std::bitset<BIT_SIZE>* hapl
 
         log_file << std::endl << "---------- Number of neomales: " << min_neomales + m << " (" << n_comb[m] << " combinations) ----------" << std::endl;
 
-        bitmask = std::string(m, 1); // K leading 1's
-        bitmask.resize(numbers[0], 0); // N-K trailing 0's
+        bitmask = std::string(min_neomales + m, 1); // K leading 1's
+        bitmask.resize(infos.n_males, 0); // N-K trailing 0's
 
         div = std::round(n_comb[m] / n_threads);
         remainder = std::round(n_comb[m] % n_threads);
@@ -69,7 +69,7 @@ void bootstrap(int* numbers, const int n_haplotypes, std::bitset<BIT_SIZE>* hapl
 
             log_file << print_time(time) << "\t" << "Allocating data to thread " << t+1 << " : [" <<start << ", " << end << "]" << std::endl;
 
-            threads.push_back(std::thread(bootstrap_chunk, n_haplotypes, haplotypes, margin, start, end, bitmask, numbers[0], m,
+            threads.push_back(std::thread(bootstrap_chunk, n_haplotypes, haplotypes, margin, start, end, bitmask, infos.n_males, min_neomales + m,
                                           std::ref(results), std::ref(individuals), std::ref(results_mutex)));
 
             for (int i=start; i<=end; ++i) std::prev_permutation(bitmask.begin(), bitmask.end());
@@ -117,7 +117,9 @@ void bootstrap_chunk(const int n_haplotypes, std::bitset<BIT_SIZE>* haplotypes, 
     for (int i=start; i<=end; ++i) {
         males.reset();
         for (auto c: combination) males.flip(c);
+//        std::cout << males.to_string() << std::endl;
         res = filter_haplotypes(haplotypes, males, margin, n_haplotypes);
+//        std::cout << res << std::endl;
         if (res > best_combination.loci) {
             results_mutex.lock();
             best_combination.combination = combination;
@@ -126,7 +128,7 @@ void bootstrap_chunk(const int n_haplotypes, std::bitset<BIT_SIZE>* haplotypes, 
         }
         ++(temp_results[res]);
         for (auto c: combination) temp_individuals[c] += res;
-        combination = comb(n_males, n_neomales + 1, bitmask);
+        combination = comb(n_males, n_neomales, bitmask);
     }
 
     results_mutex.lock();

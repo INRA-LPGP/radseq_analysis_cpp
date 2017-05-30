@@ -63,26 +63,18 @@ int main(int argc, char *argv[]) {
 
     const int n_threads = std::stoi(cmd_options.set_value(std::string("-t"), options));
 
-    int numbers[2] {0, 0};
-
-    const int n_col = get_numbers(file_path, numbers);
-    const int n_indiv = numbers[0] + numbers[1];
-
-    bool indiv_sexes[n_indiv];
-    bool indiv_col[n_col];
-
-    get_individual_data(file_path, indiv_sexes, indiv_col);
+    struct Infos infos = get_infos(file_path);
 
     log_file << "Number of individuals : ";
-    log_file << numbers[0] << " males, " << numbers[1] << " females" << std::endl;
+    log_file << infos.n_males << " males, " << infos.n_females << " females" << std::endl;
 
-    const int margin = numbers[0] - 1; // -1 to be able to compare strictly in filter_haplotypes (faster comparison)
-    const int margin_f = 1;
+    const int margin = infos.n_males - 1; // -1 to be able to compare strictly in filter_haplotypes (faster comparison)
+    const int margin_f = 0;
 
     log_file << "Margins : ";
     log_file << " Min males [" << margin + 1 << "]  | Max females [" << margin_f << "]" << std::endl;
 
-    const std::pair<int, int> haplotypes_numbers = number_of_haplotypes(file_path, indiv_col, indiv_sexes, margin_f);
+    const std::pair<int, int> haplotypes_numbers = number_of_haplotypes(file_path, infos, margin_f);
     const int n_haplotypes = haplotypes_numbers.first;
 
     log_file << "Total haplotypes : " << haplotypes_numbers.second << " | Sex-variable haplotypes : " << n_haplotypes << std::endl;
@@ -95,9 +87,19 @@ int main(int argc, char *argv[]) {
         haplotypes[i].set();
     }
 
-    get_haplotypes(file_path, indiv_col, indiv_sexes, haplotypes, margin_f);
+    get_haplotypes(file_path, infos, haplotypes, margin_f);
 
-    bootstrap(numbers, n_haplotypes, haplotypes, margin, n_threads, output_path, log_path);
+//    std::vector<int> combination {0, 3, 5, 7, 9, 10, 14, 16, 17, 18, 19, 22, 23, 24, 25, 27, 29};
+////    std::vector<int> combination {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+
+//    std::bitset<BIT_SIZE> males;
+//    males.reset();
+//    for (auto c: combination) males.flip(c);
+
+//    int res = filter_haplotypes(haplotypes, males, margin, n_haplotypes);
+//    std::cout << res << std::endl;
+
+    bootstrap(infos, n_haplotypes, haplotypes, margin, n_threads, output_path, log_path);
 
     return 0;
 }
