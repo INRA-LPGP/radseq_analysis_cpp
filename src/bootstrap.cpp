@@ -16,7 +16,7 @@ void bootstrap(Infos& infos, const int n_haplotypes, std::bitset<BIT_SIZE>* hapl
     thread_start.resize(n_threads+1);
 
     // Check for 1/3 to 2/3 neomales
-    const int min_neomales = std::round(infos.n_males / 3);
+    const int min_neomales = 0;
     const int max_neomales = std::round(2 * infos.n_males / 3);
 
     for (int i = min_neomales; i <= max_neomales; ++i){
