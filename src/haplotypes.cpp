@@ -162,9 +162,6 @@ void get_haplotypes(const std::string& file_path, const Infos& infos, std::bitse
 
     std::bitset<BIT_SIZE> haplotype;
 
-    std::ofstream test;
-    test.open("haplotypes.tsv");
-
     while (std::getline(haplotype_file, line)) {
 
         temp_haplotypes.clear();
@@ -208,8 +205,6 @@ void get_haplotypes(const std::string& file_path, const Infos& infos, std::bitse
                     // Set haplotype to 1 if present in females and count in females is higher than margin
                     if (f.find('/') == std::string::npos) {
 
-//                        std::cout << f << " : " << indiv_n << " - " << infos.n_males << " - " << indiv_n - infos.n_males << std::endl;
-
                         haplotype.set(male_n, (temp_haplotypes.count(f) and (temp_haplotypes[f] > margin)));
 
                     } else {
@@ -219,12 +214,12 @@ void get_haplotypes(const std::string& file_path, const Infos& infos, std::bitse
                         all_alleles = true;
 
                         for (auto a: alleles) {
+
                             if (not (temp_haplotypes.count(a) and (temp_haplotypes[a] > margin))) {
                                 all_alleles = false;
                             }
-                        }
 
-//                        std::cout << f << " : " << indiv_n - infos.n_males << std::endl;
+                        }
 
                         haplotype.set(male_n, all_alleles);
                     }
@@ -259,14 +254,6 @@ const uint32_t filter_haplotypes(const std::bitset<BIT_SIZE>* haplotypes, const 
     for (int i = 0; i < n_haplotypes; ++i) {
         res = (haplotypes[i] ^ males).count();
         if (res > margin) ++loci_count;
-//        if (res > margin) std::cout << i << std::endl;
-//        if (i == 0) {
-//            for (int j=0; j<64; ++j) std::cout << haplotypes[i][j] << " - ";
-//            std::cout << "\n";
-//            for (int j=0; j<64; ++j) std::cout << males[j] << " - ";
-//            std::cout << "\n";
-//        }
-    }
 
     return loci_count;
 }
