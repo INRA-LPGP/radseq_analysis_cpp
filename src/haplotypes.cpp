@@ -254,6 +254,7 @@ const uint32_t filter_haplotypes(const std::bitset<BIT_SIZE>* haplotypes, const 
     for (int i = 0; i < n_haplotypes; ++i) {
         res = (haplotypes[i] ^ males).count();
         if (res > margin) ++loci_count;
+    }
 
     return loci_count;
 }
