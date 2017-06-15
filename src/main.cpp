@@ -17,6 +17,7 @@ const std::string log_file(const std::string output_path){
     }
 }
 
+
 int main(int argc, char *argv[]) {
 
     ArgParser cmd_options(argc, argv);
@@ -25,12 +26,13 @@ int main(int argc, char *argv[]) {
     std::map<std::string, std::vector<std::string>> const options { {"-h", {"0", "bool", "prints this message"} },
                                                                     {"-f", {"", "string", "path to a stacks haplotypes file"} },
                                                                     {"-t", {"1", "int", "number of threads"} },
-                                                                    {"-o", {"/dev/stdout", "string", "output file"} }
+                                                                    {"-o", {"/dev/stdout", "string", "output file"} },
+                                                                    {"-p", {"", "string", "path to a popmap file"} }
                                                                   };
 
     if (cmd_options.contains("-h")) {
 
-        std::cout << std::endl << "Usage: radseq_bootstrap [options] -f input_file" << std::endl;
+        std::cout << std::endl << "Usage: radseq_bootstrap [options] -f input_file -p popmap_file" << std::endl;
         std::cout << std::endl << "Options:" << std::endl << std::endl;
         for (auto o: options) std::cout << "\t" << o.first << " <" << o.second[1] << ">  " << o.second[2] << "  [" << o.second[0] << "]" << std::endl;
         std::cout << std::endl;
@@ -40,7 +42,17 @@ int main(int argc, char *argv[]) {
     if (!cmd_options.contains("-f")){
 
         std::cout << std::endl << "** Error: no input file specified" << std::endl;
-        std::cout << std::endl << "Usage: radseq_bootstrap [options] -f input_file" << std::endl;
+        std::cout << std::endl << "Usage: radseq_bootstrap [options] -f input_file -p popmap_file" << std::endl;
+        std::cout << std::endl << "Options:" << std::endl << std::endl;
+        for (auto o: options) if (o.first != "-f") std::cout << "\t" << o.first << " <" << o.second[1] << ">  " << o.second[2] << "  [" << o.second[0] << "]" << std::endl;
+        std::cout << std::endl;
+        return 2;
+    }
+
+    if (!cmd_options.contains("-p")){
+
+        std::cout << std::endl << "** Error: no popmap file specified" << std::endl;
+        std::cout << std::endl << "Usage: radseq_bootstrap [options] -f input_file -p popmap_file" << std::endl;
         std::cout << std::endl << "Options:" << std::endl << std::endl;
         for (auto o: options) if (o.first != "-f") std::cout << "\t" << o.first << " <" << o.second[1] << ">  " << o.second[2] << "  [" << o.second[0] << "]" << std::endl;
         std::cout << std::endl;
@@ -49,6 +61,7 @@ int main(int argc, char *argv[]) {
 
     const std::string file_path = cmd_options.set_value(std::string("-f"), options);
     const std::string output_path = cmd_options.set_value(std::string("-o"), options);
+    const std::string popmap_path = cmd_options.set_value(std::string("-p"), options);
     const std::string log_path = log_file(output_path);
 
     std::ofstream log_file(log_path);
@@ -63,7 +76,7 @@ int main(int argc, char *argv[]) {
 
     const int n_threads = std::stoi(cmd_options.set_value(std::string("-t"), options));
 
-    struct Infos infos = get_infos(file_path);
+    struct Infos infos = get_infos(file_path, popmap_path);
 
     log_file << "Number of individuals : ";
     log_file << infos.n_males << " males, " << infos.n_females << " females" << std::endl;

@@ -15,9 +15,11 @@ void bootstrap(Infos& infos, const int n_haplotypes, std::bitset<BIT_SIZE>* hapl
     std::vector<int64_t> n_comb, thread_start;
     thread_start.resize(n_threads+1);
 
-    // Check for 1/3 to 2/3 neomales
-    const int min_neomales = 0;
-    const int max_neomales = std::round(2 * infos.n_males / 3);
+    // Check for 5 to 2/3 neomales
+    const int min_neomales = 5;
+    const int max_neomales = std::max(min_neomales, int(2 * infos.n_males / 3)); // In case there is too few males ...
+
+    log_file << "Range of neomales number: [" << min_neomales << ", " << max_neomales << "]" << std::endl;
 
     for (int i = min_neomales; i <= max_neomales; ++i){
 
@@ -38,7 +40,8 @@ void bootstrap(Infos& infos, const int n_haplotypes, std::bitset<BIT_SIZE>* hapl
 
     std::string bitmask;
 
-    int div=0, remainder=0, start=0, end=0;
+    int div=0, remainder=0;
+    int64_t start=0, end=0;
 
     for (uint m = 0; m < n_comb.size(); ++m) {
 
@@ -80,17 +83,29 @@ void bootstrap(Infos& infos, const int n_haplotypes, std::bitset<BIT_SIZE>* hapl
     }
 
     std::ofstream output_file(output_path);
+
     output_file << "# Loci number results" << std::endl;
     output_file << "Loci_number" << "\t" << "Count" << std::endl;
     for (auto r: results)output_file << r.first << "\t" << r.second << std::endl;
+
     output_file << std::endl << "# Individual results" << std::endl;
     output_file << "Individual" << "\t" << "Loci_number" << std::endl;
     for (auto i: individuals) output_file << i.first << "\t" << i.second << std::endl;
-    output_file << std::endl << "# Best combination" << std::endl;
+
+    output_file << std::endl << "# Neomales" << std::endl;
     for(uint i = 0; i < best_combination.combination.size(); ++i) {
-        output_file << best_combination.combination[i];
+        output_file << infos.males[best_combination.combination[i]];
         if (i != best_combination.combination.size() - 1 ) output_file << ", ";
         else output_file << std::endl;
+    }
+
+    output_file << std::endl << "# Real males" << std::endl;
+    for(uint i = 0; i < infos.males.size(); ++i) {
+        if (std::find(best_combination.combination.begin(), best_combination.combination.end(), i) == best_combination.combination.end()) {
+            output_file << infos.males[i];
+            if (i != infos.males.size() - 1 ) output_file << ", ";
+            else output_file << std::endl;
+        }
     }
 
     log_file << std::endl << print_time(time) << "\t" << "Process ended normally." << std::endl;

@@ -1,38 +1,52 @@
 #include "haplotypes.h"
 
 
-Infos get_infos(const std::string& file_path) {
+Infos get_infos(const std::string& file_path, const std::string& popmap_path) {
 
     struct Infos infos;
 
+    std::unordered_map<std::string, char> popmap;
+
     std::ifstream haplotype_file(file_path);
+    std::ifstream popmap_file(popmap_path);
     std::string line;
+
+    std::vector<std::string> tabs;
+
+    while(std::getline(popmap_file, line)) {
+
+        tabs = split(line, "\t");
+
+        if (tabs.size() == 2) {
+
+            popmap[tabs[0]] = char(tabs[1][0]);
+        }
+
+    }
+
     std::getline(haplotype_file, line);
 
-    char sex;
-    std::vector<std::string> fields, groups;
+    std::vector<std::string> fields;
     int field_n = 0;
 
     fields = split(line, "\t"); // Split defined in utils
 
     for (auto f: fields) {
 
-        groups = split(f, "_");
+        if (popmap.find(f) != popmap.end()) {
 
-        if (groups.size() == 3) {
-
-            sex = groups[2][0];
-
-            switch (sex) {
+            switch (popmap[f]) {
             case 'M':
                 ++infos.n_males;
                 infos.columns.push_back(true);
                 infos.sexes.push_back(true);
+                infos.males.push_back(f);
                 break;
             case 'F':
                 ++infos.n_females;
                 infos.columns.push_back(true);
                 infos.sexes.push_back(false);
+                infos.females.push_back(f);
                 break;
             default:
                 break;
@@ -47,6 +61,7 @@ Infos get_infos(const std::string& file_path) {
     }
 
     haplotype_file.close();
+
     return infos;
 }
 
