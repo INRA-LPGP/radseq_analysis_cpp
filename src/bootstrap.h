@@ -3,8 +3,8 @@
 #include <math.h>
 #include <mutex>
 #include <thread>
+#include<numeric>
 
-#include "utils.h"
 #include "haplotypes.h"
 
 void bootstrap(Infos& infos, const int n_haplotypes, std::bitset<BIT_SIZE>* haplotypes, const int margin, const int n_threads,
