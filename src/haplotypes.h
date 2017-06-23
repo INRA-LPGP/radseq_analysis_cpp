@@ -15,7 +15,7 @@ struct Infos {
     uint n_females = 0;
 };
 
-Infos get_infos(const std::string& file_path, const std::string& popmap_path);
+Infos get_infos(const std::string& file_path, const std::string& popmap_path, const std::string& sex);
 
 const std::pair<int, int> number_of_haplotypes(const std::string& file_path, const Infos& infos, const int margin);
 

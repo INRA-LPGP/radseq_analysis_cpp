@@ -27,7 +27,8 @@ int main(int argc, char *argv[]) {
                                                                     {"-f", {"", "string", "path to a stacks haplotypes file"} },
                                                                     {"-t", {"1", "int", "number of threads"} },
                                                                     {"-o", {"/dev/stdout", "string", "output file"} },
-                                                                    {"-p", {"", "string", "path to a popmap file"} }
+                                                                    {"-p", {"", "string", "path to a popmap file"} },
+                                                                    {"-s", {"m", "string", "sex of neo individuals [m/f]"} }
                                                                   };
 
     if (cmd_options.contains("-h")) {
@@ -63,6 +64,7 @@ int main(int argc, char *argv[]) {
     const std::string output_path = cmd_options.set_value(std::string("-o"), options);
     const std::string popmap_path = cmd_options.set_value(std::string("-p"), options);
     const std::string log_path = log_file(output_path);
+    const std::string sex = cmd_options.set_value(std::string("-s"), options);
 
     std::ofstream log_file(log_path);
     char time[DTTMSZ];
@@ -76,7 +78,7 @@ int main(int argc, char *argv[]) {
 
     const int n_threads = std::stoi(cmd_options.set_value(std::string("-t"), options));
 
-    struct Infos infos = get_infos(file_path, popmap_path);
+    struct Infos infos = get_infos(file_path, popmap_path, sex);
 
     log_file << "Number of individuals : ";
     log_file << infos.n_males << " males, " << infos.n_females << " females" << std::endl;

@@ -1,7 +1,7 @@
 #include "haplotypes.h"
 
 
-Infos get_infos(const std::string& file_path, const std::string& popmap_path) {
+Infos get_infos(const std::string& file_path, const std::string& popmap_path, const std::string& sex) {
 
     struct Infos infos;
 
@@ -37,16 +37,29 @@ Infos get_infos(const std::string& file_path, const std::string& popmap_path) {
 
             switch (popmap[f]) {
             case 'M':
-                ++infos.n_males;
                 infos.columns.push_back(true);
-                infos.sexes.push_back(true);
-                infos.males.push_back(f);
+                if (sex == "m") {
+                    ++infos.n_males;
+                    infos.sexes.push_back(true);
+                    infos.males.push_back(f);
+                } else if (sex == "f") {
+                    ++infos.n_females;
+                    infos.sexes.push_back(false);
+                    infos.females.push_back(f);
+                }
                 break;
             case 'F':
-                ++infos.n_females;
+
                 infos.columns.push_back(true);
-                infos.sexes.push_back(false);
-                infos.females.push_back(f);
+                if (sex == "m") {
+                    ++infos.n_females;
+                    infos.sexes.push_back(false);
+                    infos.females.push_back(f);
+                } else if (sex == "f") {
+                    ++infos.n_males;
+                    infos.sexes.push_back(true);
+                    infos.males.push_back(f);
+                }
                 break;
             default:
                 break;
