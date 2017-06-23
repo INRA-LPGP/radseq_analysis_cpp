@@ -3,7 +3,7 @@
 #include <math.h>
 #include <mutex>
 #include <thread>
-#include<numeric>
+#include <numeric>
 
 #include "haplotypes.h"
 
